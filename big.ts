@@ -27,6 +27,19 @@ export class Unsigned {
     }
   }
 
+  static fromHexString(s: string) {
+    var arr = [],
+        limb: string;
+    while (s.length > 8) {
+      limb = s.substr(s.length - 8, 8);
+      s = s.substr(0, s.length - 8);
+      arr.push(parseInt(limb, 16));
+    }
+    arr.push(parseInt(s, 16));
+    var limbs = new Uint32Array(arr);
+    return new Unsigned(limbs);
+  }
+
   toHexString() {
     var result = '',
         limb: string;
