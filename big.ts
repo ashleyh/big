@@ -9,6 +9,10 @@ function padLeft(s: string) {
   return s;
 }
 
+function addWouldOverflow(a: number, b: number) {
+  return a > (0xffffffff - b);
+}
+
 export class Unsigned {
   constructor(public limbs: Uint32Array) {
   }
@@ -50,5 +54,23 @@ export class Unsigned {
     limb = this.limbs[this.limbs.length - 1].toString(16);
     result = limb + result;
     return result;
+  }
+
+  add(other: Unsigned) {
+    var L = this.limbs.length,
+        M = other.limbs.length,
+        N = (L < M)? (M + 1): (L + 1),
+        limbs = new Uint32Array(N),
+        carry = 0;
+    for (var i = 0; i < N; i++) {
+      var a = (i < L)? this.limbs[i]: 0;
+      var b = (i < M)? other.limbs[i]: 0;
+      limbs[i] = a + b + carry;
+      carry = (addWouldOverflow(a, b) || addWouldOverflow(a + b, carry))? 1: 0;
+    }
+    if (limbs[N - 1] == 0) {
+      limbs = limbs.subarray(0, N - 1);
+    }
+    return new Unsigned(limbs);
   }
 }

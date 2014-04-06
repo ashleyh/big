@@ -35,4 +35,14 @@ describe('Unsigned', function() {
     assert.equal(n.limbs[2], 0x90abcdef);
     assert.equal(n.limbs[3], 0x12345678);
   });
+
+  it('should add numbers without carry', function() {
+    var n = big.Unsigned.fromHexString('1');
+    assert.equal(n.add(n).toHexString(), '2');
+  });
+
+  it('should add numbers with carry', function() {
+    var n = big.Unsigned.fromHexString('ffffffffffffffff');
+    assert.equal(n.add(n).toHexString(), '1fffffffffffffffe');
+  });
 });
