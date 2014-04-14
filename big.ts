@@ -73,4 +73,13 @@ export class Unsigned {
     }
     return new Unsigned(limbs);
   }
+
+  not() {
+    var N = this.limbs.length,
+        limbs = new Uint32Array(N);
+    for (var i = 0; i < N; i++) {
+      limbs[i] = ~this.limbs[i];
+    }
+    return new Unsigned(limbs);
+  }
 }

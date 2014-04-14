@@ -45,4 +45,9 @@ describe('Unsigned', function() {
     var n = big.Unsigned.fromHexString('ffffffffffffffff');
     assert.equal(n.add(n).toHexString(), '1fffffffffffffffe');
   });
+
+  it('should compute limbwise not', function() {
+    var n = big.Unsigned.fromHexString('f0f0f0f0f0f0f0f0');
+    assert.equal(n.not().toHexString(), 'f0f0f0f0f0f0f0f');
+  });
 });
