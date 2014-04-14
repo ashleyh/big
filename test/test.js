@@ -1,6 +1,21 @@
 var assert = require('assert'),
     big = require('../big.js');
 
+function random(limbCount) {
+  var limbs = new Uint32Array(limbCount);
+  for (var i = 0; i < limbCount; i++) {
+    limbs[i] = 0xffffffff * Math.random();
+  }
+  return new big.Unsigned(limbs);
+}
+
+function assertLimbs(n, limbs) {
+  assert.equal(n.limbs.length, limbs.length);
+  for (var i = 0; i < n.limbs.length; i++) {
+    assert.equal(n.limbs[i], limbs[i]);
+  }
+}
+
 describe('Unsigned', function() {
   it('should convert to/from number', function() {
     var n = 123;
@@ -49,5 +64,38 @@ describe('Unsigned', function() {
   it('should compute limbwise not', function() {
     var n = big.Unsigned.fromHexString('f0f0f0f0f0f0f0f0');
     assert.equal(n.not().toHexString(), 'f0f0f0f0f0f0f0f');
+  });
+
+  it('should subtract', function() {
+    var a = big.Unsigned.fromHexString('1000000000000000000'),
+        b = big.Unsigned.fromHexString('1');
+    assert.equal(a.sub(b).toHexString(), 'ffffffffffffffffff');
+  });
+
+  it('should obey expected relationship between add and sub', function() {
+    for (var i = 1; i < 100; i++) {
+      for (var j = 0; j < 100; j++) {
+        var a = random(i), b = random(j);
+        assert.equal(a.add(b).sub(b).toHexString(), a.toHexString());
+      }
+    }
+  });
+
+  it('should reduce wasteful representations', function() {
+    var limbs = new Uint32Array([1, 2, 3, 0, 0]),
+        n = new big.Unsigned(limbs);
+    assertLimbs(n.reduce(), [1, 2, 3]);
+  });
+
+  it('should not reduce not-wasteful representations', function() {
+    var limbs = new Uint32Array([1]),
+        n = new big.Unsigned(limbs);
+    assertLimbs(n.reduce(), [1]);
+  });
+
+  it('should reduce [0, 0, ...] to [0]', function() {
+    var limbs = new Uint32Array([0, 0, 0]),
+        n = new big.Unsigned(limbs);
+    assertLimbs(n.reduce(), [0]);
   });
 });

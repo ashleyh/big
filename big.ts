@@ -68,10 +68,15 @@ export class Unsigned {
       limbs[i] = a + b + carry;
       carry = (addWouldOverflow(a, b) || addWouldOverflow(a + b, carry))? 1: 0;
     }
-    if (limbs[N - 1] == 0) {
-      limbs = limbs.subarray(0, N - 1);
+    return (new Unsigned(limbs)).reduce();
+  }
+
+  reduce() {
+    var N = this.limbs.length - 1;
+    while (N > 0 && this.limbs[N] == 0) {
+      N--;
     }
-    return new Unsigned(limbs);
+    return new Unsigned(this.limbs.subarray(0, N + 1));
   }
 
   not() {
@@ -81,5 +86,10 @@ export class Unsigned {
       limbs[i] = ~this.limbs[i];
     }
     return new Unsigned(limbs);
+  }
+
+  // assumes other is less than this
+  sub(other: Unsigned) {
+    return this.not().add(other).not().reduce();
   }
 }
