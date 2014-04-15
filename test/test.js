@@ -16,6 +16,14 @@ function assertLimbs(n, limbs) {
   }
 }
 
+function repeat(s, n) {
+  var result = '';
+  for (var i = 0; i < n; i++) {
+    result += s;
+  }
+  return result;
+}
+
 describe('Unsigned', function() {
   it('should convert to/from number', function() {
     var n = 123;
@@ -97,5 +105,12 @@ describe('Unsigned', function() {
     var limbs = new Uint32Array([0, 0, 0]),
         n = new big.Unsigned(limbs);
     assertLimbs(n.reduce(), [0]);
+  });
+
+  it('should compute powers of two', function() {
+    for (var i = 0; i < 100; i++) {
+      var n = big.Unsigned.pow2(i * 4);
+      assert.equal(n.toHexString(), '1' + repeat('0', i));
+    }
   });
 });

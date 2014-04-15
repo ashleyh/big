@@ -25,6 +25,11 @@ export class Unsigned {
     }
   }
 
+  static pow2(n: number) {
+    var r = n % 32;
+    return Unsigned.fromNumber(1 << r).shiftUp(n - r);
+  }
+
   toNumber() {
     if (this.limbs.length == 1) {
       return this.limbs[0];
@@ -91,5 +96,20 @@ export class Unsigned {
   // assumes other is less than this
   sub(other: Unsigned) {
     return this.not().add(other).not().reduce();
+  }
+
+  shiftUp(bits: number) {
+    var limbs = [];
+    while (bits >= 32) {
+      limbs.push(0);
+      bits -= 32;
+    }
+    if (bits != 0) {
+      throw new Error('not supported');
+    }
+    for (var i = 0; i < this.limbs.length; i++) {
+      limbs.push(this.limbs[i]);
+    }
+    return new Unsigned(new Uint32Array(limbs));
   }
 }
