@@ -1,7 +1,3 @@
-function isInt32(n: number) {
-  return (n & 0xffffffff) == n;
-}
-
 function padLeft(s: string) {
   while (s.length < 8) {
     s = '0' + s;
@@ -18,11 +14,9 @@ export class Unsigned {
   }
 
   static fromNumber(n: number) {
-    if (isInt32(n)) {
-      var arr = new Uint32Array(1);
-      arr[0] = n;
-      return new Unsigned(arr);
-    }
+    var arr = new Uint32Array(1);
+    arr[0] = n;
+    return new Unsigned(arr);
   }
 
   static pow2(n: number) {
