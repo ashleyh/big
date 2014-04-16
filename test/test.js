@@ -107,6 +107,13 @@ describe('Unsigned', function() {
     assertLimbs(n.reduce(), [0]);
   });
 
+  it('should shift up', function() {
+    var n = big.Unsigned.fromHexString('ffffffff');
+    assert.equal(n.shiftUp(15).toHexString(),  '7fffffff8000');
+    assert.equal(n.shiftUp(16).toHexString(),  'ffffffff0000');
+    assert.equal(n.shiftUp(17).toHexString(), '1fffffffe0000');
+  });
+
   it('should compute powers of two', function() {
     for (var i = 0; i < 100; i++) {
       var n = big.Unsigned.pow2(i * 4);

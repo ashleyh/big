@@ -26,8 +26,7 @@ export class Unsigned {
   }
 
   static pow2(n: number) {
-    var r = n % 32;
-    return Unsigned.fromNumber(1 << r).shiftUp(n - r);
+    return Unsigned.fromNumber(1).shiftUp(n);
   }
 
   toNumber() {
@@ -104,11 +103,22 @@ export class Unsigned {
       limbs.push(0);
       bits -= 32;
     }
-    if (bits != 0) {
-      throw new Error('not supported');
-    }
-    for (var i = 0; i < this.limbs.length; i++) {
-      limbs.push(this.limbs[i]);
+    if (bits == 0) {
+      for (var i = 0; i < this.limbs.length; i++) {
+        limbs.push(this.limbs[i]);
+      }
+    } else {
+      var carry = 0;
+      var loMask = (1 << (32 - bits)) - 1;
+      var hiMask = ~loMask;
+      for (var i = 0; i < this.limbs.length; i++) {
+        var old = this.limbs[i];
+        limbs.push(carry | ((old & loMask) << bits));
+        carry = (old & hiMask) >>> (32 - bits);
+      }
+      if (carry != 0) {
+        limbs.push(carry);
+      }
     }
     return new Unsigned(new Uint32Array(limbs));
   }
