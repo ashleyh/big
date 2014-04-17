@@ -120,4 +120,27 @@ describe('Unsigned', function() {
       assert.equal(n.toHexString(), '1' + repeat('0', i));
     }
   });
+
+  it('should multiply 32-bit values correctly mod 0x10000', function() {
+    for (var i = 1; i < 1000; i++) {
+      var a = random(1), b = random(1);
+      var c = a.mul(b);
+      var r = (a.limbs[0] % 0x10000) * (b.limbs[0] % 0x10000);
+      assert.equal(
+        c.limbs[0] % 0x10000,
+        r % 0x10000
+      );
+    }
+  });
+
+  it('should multiply powers of two correctly', function() {
+    for (var i = 0; i < 100; i++) {
+      for (var j = 0; j < 100; j++) {
+        var a = big.Unsigned.pow2(i),
+            b = big.Unsigned.pow2(j),
+            c = big.Unsigned.pow2(i + j);
+        assert.equal(a.mul(b).toHexString(), c.toHexString());
+      }
+    }
+  });
 });

@@ -117,4 +117,34 @@ export class Unsigned {
     }
     return Unsigned.fromArray(limbs);
   }
+
+  mul16(n: number) {
+    var limbs1 = [],
+        limbs2 = [];
+
+    for (var i = 0; i < this.limbs.length; i++) {
+      var limb = this.limbs[i],
+          lo = limb & 0xffff,
+          hi = limb >>> 16;
+      limbs1.push(lo * n);
+      limbs2.push(hi * n);
+    }
+
+    var a = Unsigned.fromArray(limbs1),
+        b = Unsigned.fromArray(limbs2);
+
+    return a.add(b.shiftUp(16));
+  }
+
+  mul(other: Unsigned) {
+    var accum = Unsigned.fromNumber(0);
+    for (var i = 0; i < this.limbs.length; i++) {
+      var limb = this.limbs[i],
+          lo = limb & 0xffff,
+          hi = limb >>> 16;
+      accum = accum.add(other.mul16(lo).shiftUp(32 * i));
+      accum = accum.add(other.mul16(hi).shiftUp(32 * i + 16));
+    }
+    return accum;
+  }
 }
