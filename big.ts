@@ -13,10 +13,12 @@ export class Unsigned {
   constructor(public limbs: Uint32Array) {
   }
 
+  static fromArray(arr) {
+    return new Unsigned(new Uint32Array(arr));
+  }
+
   static fromNumber(n: number) {
-    var arr = new Uint32Array(1);
-    arr[0] = n;
-    return new Unsigned(arr);
+    return Unsigned.fromArray([n]);
   }
 
   static pow2(n: number) {
@@ -38,8 +40,7 @@ export class Unsigned {
       arr.push(parseInt(limb, 16));
     }
     arr.push(parseInt(s, 16));
-    var limbs = new Uint32Array(arr);
-    return new Unsigned(limbs);
+    return Unsigned.fromArray(arr);
   }
 
   toHexString() {
@@ -114,6 +115,6 @@ export class Unsigned {
         limbs.push(carry);
       }
     }
-    return new Unsigned(new Uint32Array(limbs));
+    return Unsigned.fromArray(limbs);
   }
 }
